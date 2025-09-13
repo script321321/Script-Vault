@@ -1,29 +1,35 @@
--- Elegant UI Library
--- Eine schöne, anpassbare UI-Bibliothek für Roblox
+-- Modern Elegant UI Library
+-- Ultra-moderne UI-Bibliothek mit User-Profil und modernem Design
 
-local ElegantUI = {}
-ElegantUI.__index = ElegantUI
+local ModernUI = {}
+ModernUI.__index = ModernUI
 
 -- Services
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
--- Standard-Farbpalette
-ElegantUI.Colors = {
-    Primary = Color3.fromRGB(80, 120, 255),
-    Secondary = Color3.fromRGB(60, 90, 200),
-    Background = Color3.fromRGB(30, 30, 40),
-    LightBackground = Color3.fromRGB(40, 40, 50),
-    Text = Color3.fromRGB(240, 240, 240),
-    Success = Color3.fromRGB(80, 200, 120),
-    Warning = Color3.fromRGB(255, 180, 60),
-    Danger = Color3.fromRGB(220, 80, 80),
-    Accent = Color3.fromRGB(150, 100, 255)
+-- Modern Color Palette
+ModernUI.Colors = {
+    Primary = Color3.fromRGB(103, 132, 255),
+    Secondary = Color3.fromRGB(80, 110, 240),
+    Background = Color3.fromRGB(25, 28, 40),
+    Card = Color3.fromRGB(35, 38, 50),
+    LightCard = Color3.fromRGB(45, 48, 60),
+    Text = Color3.fromRGB(240, 242, 245),
+    SubText = Color3.fromRGB(180, 185, 195),
+    Success = Color3.fromRGB(92, 214, 145),
+    Warning = Color3.fromRGB(255, 193, 92),
+    Danger = Color3.fromRGB(255, 108, 108),
+    Accent = Color3.fromRGB(168, 130, 255),
+    Gradient1 = Color3.fromRGB(103, 132, 255),
+    Gradient2 = Color3.fromRGB(168, 130, 255)
 }
 
--- Hilfsfunktionen
-function ElegantUI:CreateInstance(className, properties)
+-- Utility Functions
+function ModernUI:CreateInstance(className, properties)
     local instance = Instance.new(className)
     for property, value in pairs(properties) do
         instance[property] = value
@@ -31,99 +37,138 @@ function ElegantUI:CreateInstance(className, properties)
     return instance
 end
 
-function ElegantUI:Tween(object, properties, duration, style, direction)
+function ModernUI:Tween(object, properties, duration, style, direction)
     local tweenInfo = TweenInfo.new(duration or 0.3, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out)
     local tween = TweenService:Create(object, tweenInfo, properties)
     tween:Play()
     return tween
 end
 
--- Hauptfenster erstellen
-function ElegantUI:CreateWindow(title, keybind, customColors)
+function ModernUI:CreateGradient(parent, colors)
+    local gradient = self:CreateInstance("UIGradient", {
+        Parent = parent,
+        Color = ColorSequence.new({colors[1], colors[2]}),
+        Rotation = -90
+    })
+    return gradient
+end
+
+-- Main Window Creation
+function ModernUI:CreateWindow(title, keybind, customColors)
     local Window = {}
     
-    -- Benutzerdefinierte Farben verwenden falls vorhanden
+    -- Use custom colors if provided
     local colors = customColors or self.Colors
     
-    -- ScreenGui erstellen
+    -- ScreenGui with high Z-index
     local ScreenGui = self:CreateInstance("ScreenGui", {
-        Name = "ElegantUI",
+        Name = "ModernUI",
         ResetOnSpawn = false,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
     })
     
-    -- Hauptcontainer mit abgerundeten Ecken
+    -- Main Container with modern design
     local MainFrame = self:CreateInstance("Frame", {
         Name = "MainFrame",
-        Size = UDim2.new(0, 500, 0, 450),
-        Position = UDim2.new(0.5, -250, 0.5, -225),
+        Size = UDim2.new(0, 550, 0, 500),
+        Position = UDim2.new(0.5, -275, 0.5, -250),
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = colors.Background,
         BorderSizePixel = 0,
+        ClipsDescendants = true,
         Parent = ScreenGui
     })
     
+    -- Modern rounded corners
     local Corner = self:CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, 8),
+        CornerRadius = UDim.new(0, 12),
         Parent = MainFrame
     })
     
-    -- Titelbar mit Schatten
-    local TitleBar = self:CreateInstance("Frame", {
-        Name = "TitleBar",
-        Size = UDim2.new(1, 0, 0, 35),
+    -- Subtle shadow effect
+    local Shadow = self:CreateInstance("ImageLabel", {
+        Name = "Shadow",
+        Size = UDim2.new(1, 20, 1, 20),
+        Position = UDim2.new(0, -10, 0, -10),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://5554236805",
+        ImageColor3 = Color3.fromRGB(0, 0, 0),
+        ImageTransparency = 0.8,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(23, 23, 277, 277),
+        ZIndex = 0,
+        Parent = MainFrame
+    })
+    
+    -- Header with gradient
+    local Header = self:CreateInstance("Frame", {
+        Name = "Header",
+        Size = UDim2.new(1, 0, 0, 45),
         BackgroundColor3 = colors.Primary,
         BorderSizePixel = 0,
         Parent = MainFrame
     })
     
-    local TitleCorner = self:CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, 8, 0, 0),
-        Parent = TitleBar
+    local HeaderCorner = self:CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 12, 0, 0),
+        Parent = Header
     })
     
+    -- Header gradient
+    self:CreateGradient(Header, {colors.Gradient1, colors.Gradient2})
+    
+    -- Title with modern font
     local TitleText = self:CreateInstance("TextLabel", {
         Name = "TitleText",
-        Size = UDim2.new(1, -60, 1, 0),
-        Position = UDim2.new(0, 15, 0, 0),
+        Size = UDim2.new(1, -100, 1, 0),
+        Position = UDim2.new(0, 20, 0, 0),
         BackgroundTransparency = 1,
-        Text = title or "Elegant UI",
+        Text = title or "Modern UI",
         TextColor3 = colors.Text,
         TextXAlignment = Enum.TextXAlignment.Left,
         Font = Enum.Font.GothamBold,
-        TextSize = 16,
-        Parent = TitleBar
+        TextSize = 18,
+        Parent = Header
     })
     
+    -- Close button with modern design
     local CloseButton = self:CreateInstance("TextButton", {
         Name = "CloseButton",
-        Size = UDim2.new(0, 35, 0, 35),
-        Position = UDim2.new(1, -35, 0, 0),
-        BackgroundColor3 = Color3.fromRGB(0, 0, 0, 0),
+        Size = UDim2.new(0, 30, 0, 30),
+        Position = UDim2.new(1, -35, 0.5, -15),
+        AnchorPoint = Vector2.new(1, 0.5),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 0.9,
         BorderSizePixel = 0,
         Text = "×",
-        TextColor3 = colors.Text,
+        TextColor3 = colors.Danger,
         Font = Enum.Font.GothamBold,
         TextSize = 20,
-        Parent = TitleBar
+        Parent = Header
+    })
+    
+    local CloseCorner = self:CreateInstance("UICorner", {
+        CornerRadius = UDim.new(1, 0),
+        Parent = CloseButton
     })
     
     -- Tabs Container
     local TabsContainer = self:CreateInstance("Frame", {
         Name = "TabsContainer",
-        Size = UDim2.new(1, -20, 0, 40),
-        Position = UDim2.new(0, 10, 0, 40),
-        BackgroundColor3 = colors.LightBackground,
+        Size = UDim2.new(1, -30, 0, 40),
+        Position = UDim2.new(0, 15, 0, 55),
+        BackgroundColor3 = colors.Card,
         BorderSizePixel = 0,
         Parent = MainFrame
     })
     
     local TabsCorner = self:CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, 6),
+        CornerRadius = UDim.new(0, 8),
         Parent = TabsContainer
     })
     
-    local UIListLayout = self:CreateInstance("UIListLayout", {
+    local TabsLayout = self:CreateInstance("UIListLayout", {
         Parent = TabsContainer,
         FillDirection = Enum.FillDirection.Horizontal,
         Padding = UDim.new(0, 5)
@@ -132,11 +177,11 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
     -- Content Container
     local ContentContainer = self:CreateInstance("ScrollingFrame", {
         Name = "ContentContainer",
-        Size = UDim2.new(1, -20, 1, -85),
-        Position = UDim2.new(0, 10, 0, 85),
+        Size = UDim2.new(1, -30, 1, -170),
+        Position = UDim2.new(0, 15, 0, 105),
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        ScrollBarThickness = 5,
+        ScrollBarThickness = 4,
         ScrollBarImageColor3 = colors.Primary,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         Parent = MainFrame
@@ -145,34 +190,124 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
     local ContentLayout = self:CreateInstance("UIListLayout", {
         Parent = ContentContainer,
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 12)
+        Padding = UDim.new(0, 15)
     })
     
-    -- Variablen
+    -- User Profile Section
+    local UserProfile = self:CreateInstance("Frame", {
+        Name = "UserProfile",
+        Size = UDim2.new(1, -30, 0, 60),
+        Position = UDim2.new(0, 15, 1, -70),
+        AnchorPoint = Vector2.new(0, 1),
+        BackgroundColor3 = colors.Card,
+        BorderSizePixel = 0,
+        Parent = MainFrame
+    })
+    
+    local UserCorner = self:CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 8),
+        Parent = UserProfile
+    })
+    
+    -- User Avatar
+    local Avatar = self:CreateInstance("ImageLabel", {
+        Name = "Avatar",
+        Size = UDim2.new(0, 40, 0, 40),
+        Position = UDim2.new(0, 10, 0.5, -20),
+        BackgroundColor3 = colors.LightCard,
+        BorderSizePixel = 0,
+        Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. LocalPlayer.UserId .. "&width=150&height=150&format=png",
+        Parent = UserProfile
+    })
+    
+    local AvatarCorner = self:CreateInstance("UICorner", {
+        CornerRadius = UDim.new(1, 0),
+        Parent = Avatar
+    })
+    
+    -- User Info
+    local Username = self:CreateInstance("TextLabel", {
+        Name = "Username",
+        Size = UDim2.new(0.6, 0, 0, 20),
+        Position = UDim2.new(0, 60, 0, 10),
+        BackgroundTransparency = 1,
+        Text = LocalPlayer.Name,
+        TextColor3 = colors.Text,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Font = Enum.Font.GothamBold,
+        TextSize = 14,
+        Parent = UserProfile
+    })
+    
+    local UserId = self:CreateInstance("TextLabel", {
+        Name = "UserId",
+        Size = UDim2.new(0.6, 0, 0, 16),
+        Position = UDim2.new(0, 60, 0, 32),
+        BackgroundTransparency = 1,
+        Text = "ID: " .. LocalPlayer.UserId,
+        TextColor3 = colors.SubText,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Font = Enum.Font.Gotham,
+        TextSize = 12,
+        Parent = UserProfile
+    })
+    
+    -- Status indicator
+    local Status = self:CreateInstance("Frame", {
+        Name = "Status",
+        Size = UDim2.new(0, 8, 0, 8),
+        Position = UDim2.new(1, -20, 0.5, -4),
+        AnchorPoint = Vector2.new(1, 0.5),
+        BackgroundColor3 = colors.Success,
+        BorderSizePixel = 0,
+        Parent = UserProfile
+    })
+    
+    local StatusCorner = self:CreateInstance("UICorner", {
+        CornerRadius = UDim.new(1, 0),
+        Parent = Status
+    })
+    
+    local StatusText = self:CreateInstance("TextLabel", {
+        Name = "StatusText",
+        Size = UDim2.new(0, 50, 0, 16),
+        Position = UDim2.new(1, -35, 0.5, -8),
+        AnchorPoint = Vector2.new(1, 0.5),
+        BackgroundTransparency = 1,
+        Text = "Online",
+        TextColor3 = colors.SubText,
+        TextXAlignment = Enum.TextXAlignment.Right,
+        Font = Enum.Font.Gotham,
+        TextSize = 11,
+        Parent = UserProfile
+    })
+    
+    -- Variables
     local tabs = {}
     local currentTab = nil
     local isVisible = true
     
-    -- Funktionen
+    -- Functions
     function Window:Toggle()
         isVisible = not isVisible
         MainFrame.Visible = isVisible
     end
     
-    function Window:CreateTab(name)
+    function Window:CreateTab(name, icon)
         local Tab = {}
         
-        -- Tab Button
+        -- Tab Button with modern design
         local TabButton = self:CreateInstance("TextButton", {
             Name = name .. "Tab",
             Size = UDim2.new(0, 100, 1, -10),
             Position = UDim2.new(0, 0, 0, 5),
-            BackgroundColor3 = colors.LightBackground,
+            BackgroundColor3 = colors.LightCard,
             BorderSizePixel = 0,
-            Text = name,
-            TextColor3 = colors.Text,
+            Text = "  " .. name,
+            TextColor3 = colors.SubText,
             Font = Enum.Font.Gotham,
-            TextSize = 12,
+            TextSize = 13,
+            TextXAlignment = Enum.TextXAlignment.Left,
             Parent = TabsContainer
         })
         
@@ -180,6 +315,19 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             CornerRadius = UDim.new(0, 6),
             Parent = TabButton
         })
+        
+        -- Tab icon if provided
+        if icon then
+            local Icon = self:CreateInstance("ImageLabel", {
+                Name = "Icon",
+                Size = UDim2.new(0, 16, 0, 16),
+                Position = UDim2.new(0, 10, 0.5, -8),
+                BackgroundTransparency = 1,
+                Image = icon,
+                ImageColor3 = colors.SubText,
+                Parent = TabButton
+            })
+        end
         
         -- Tab Content
         local TabContent = self:CreateInstance("Frame", {
@@ -193,32 +341,32 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
         local TabLayout = self:CreateInstance("UIListLayout", {
             Parent = TabContent,
             SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 12)
+            Padding = UDim.new(0, 15)
         })
         
         TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             TabContent.Size = UDim2.new(1, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end)
         
-        -- Funktionen
+        -- Functions
         function Tab:Show()
             if currentTab then
                 currentTab:Hide()
             end
             TabContent.Visible = true
-            self:Tween(TabButton, {BackgroundColor3 = colors.Primary}, 0.2)
+            self:Tween(TabButton, {BackgroundColor3 = colors.Primary, TextColor3 = colors.Text}, 0.2)
             currentTab = Tab
         end
         
         function Tab:Hide()
             TabContent.Visible = false
-            self:Tween(TabButton, {BackgroundColor3 = colors.LightBackground}, 0.2)
+            self:Tween(TabButton, {BackgroundColor3 = colors.LightCard, TextColor3 = colors.SubText}, 0.2)
         end
         
-        function Tab:AddButton(name, callback)
+        function Tab:AddButton(name, callback, tooltip)
             local ButtonFrame = self:CreateInstance("Frame", {
                 Name = name .. "Button",
-                Size = UDim2.new(1, 0, 0, 35),
+                Size = UDim2.new(1, 0, 0, 40),
                 BackgroundTransparency = 1,
                 Parent = TabContent,
                 LayoutOrder = #TabContent:GetChildren()
@@ -227,7 +375,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             local Button = self:CreateInstance("TextButton", {
                 Name = "Button",
                 Size = UDim2.new(1, 0, 1, 0),
-                BackgroundColor3 = colors.Primary,
+                BackgroundColor3 = colors.Card,
                 BorderSizePixel = 0,
                 Text = name,
                 TextColor3 = colors.Text,
@@ -237,23 +385,24 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             })
             
             local ButtonCorner = self:CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 6),
+                CornerRadius = UDim.new(0, 8),
                 Parent = Button
             })
             
+            -- Hover effects
             Button.MouseEnter:Connect(function()
-                self:Tween(Button, {BackgroundColor3 = colors.Secondary}, 0.2)
+                self:Tween(Button, {BackgroundColor3 = colors.LightCard}, 0.2)
             end)
             
             Button.MouseLeave:Connect(function()
-                self:Tween(Button, {BackgroundColor3 = colors.Primary}, 0.2)
+                self:Tween(Button, {BackgroundColor3 = colors.Card}, 0.2)
             end)
             
             Button.MouseButton1Click:Connect(function()
-                self:Tween(Button, {BackgroundColor3 = colors.Accent}, 0.1)
+                self:Tween(Button, {BackgroundColor3 = colors.Primary}, 0.1)
                 if callback then callback() end
                 wait(0.1)
-                self:Tween(Button, {BackgroundColor3 = colors.Primary}, 0.2)
+                self:Tween(Button, {BackgroundColor3 = colors.Card}, 0.2)
             end)
             
             return Button
@@ -265,7 +414,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             
             local ToggleFrame = self:CreateInstance("Frame", {
                 Name = name .. "Toggle",
-                Size = UDim2.new(1, 0, 0, 30),
+                Size = UDim2.new(1, 0, 0, 35),
                 BackgroundTransparency = 1,
                 Parent = TabContent,
                 LayoutOrder = #TabContent:GetChildren()
@@ -285,7 +434,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             
             local ToggleButton = self:CreateInstance("TextButton", {
                 Name = "Toggle",
-                Size = UDim2.new(0, 45, 0, 22),
+                Size = UDim2.new(0, 50, 0, 25),
                 Position = UDim2.new(1, 0, 0.5, 0),
                 AnchorPoint = Vector2.new(1, 0.5),
                 BackgroundColor3 = isEnabled and colors.Success or Color3.fromRGB(100, 100, 100),
@@ -295,14 +444,14 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             })
             
             local ToggleCorner = self:CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 11),
+                CornerRadius = UDim.new(0, 12),
                 Parent = ToggleButton
             })
             
             local ToggleDot = self:CreateInstance("Frame", {
                 Name = "Dot",
-                Size = UDim2.new(0, 16, 0, 16),
-                Position = UDim2.new(0, isEnabled and 25 or 3, 0.5, -8),
+                Size = UDim2.new(0, 19, 0, 19),
+                Position = UDim2.new(0, isEnabled and 27 or 3, 0.5, -9.5),
                 AnchorPoint = Vector2.new(0, 0.5),
                 BackgroundColor3 = colors.Text,
                 BorderSizePixel = 0,
@@ -310,14 +459,14 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             })
             
             local ToggleDotCorner = self:CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
+                CornerRadius = UDim.new(1, 0),
                 Parent = ToggleDot
             })
             
             function Toggle:Set(value)
                 isEnabled = value
                 self:Tween(ToggleButton, {BackgroundColor3 = isEnabled and colors.Success or Color3.fromRGB(100, 100, 100)}, 0.2)
-                self:Tween(ToggleDot, {Position = UDim2.new(0, isEnabled and 25 or 3, 0.5, -8)}, 0.2)
+                self:Tween(ToggleDot, {Position = UDim2.new(0, isEnabled and 27 or 3, 0.5, -9.5)}, 0.2)
                 if callback then callback(isEnabled) end
             end
             
@@ -338,7 +487,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             
             local SliderFrame = self:CreateInstance("Frame", {
                 Name = name .. "Slider",
-                Size = UDim2.new(1, 0, 0, 55),
+                Size = UDim2.new(1, 0, 0, 60),
                 BackgroundTransparency = 1,
                 Parent = TabContent,
                 LayoutOrder = #TabContent:GetChildren()
@@ -370,9 +519,9 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
                 AnchorPoint = Vector2.new(1, 0),
                 BackgroundTransparency = 1,
                 Text = tostring(value),
-                TextColor3 = colors.Text,
+                TextColor3 = colors.Primary,
                 TextXAlignment = Enum.TextXAlignment.Right,
-                Font = Enum.Font.Gotham,
+                Font = Enum.Font.GothamBold,
                 TextSize = 13,
                 Parent = SliderHeader
             })
@@ -380,14 +529,14 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             local SliderTrack = self:CreateInstance("Frame", {
                 Name = "Track",
                 Size = UDim2.new(1, 0, 0, 6),
-                Position = UDim2.new(0, 0, 1, -15),
-                BackgroundColor3 = Color3.fromRGB(80, 80, 90),
+                Position = UDim2.new(0, 0, 1, -20),
+                BackgroundColor3 = Color3.fromRGB(60, 64, 78),
                 BorderSizePixel = 0,
                 Parent = SliderFrame
             })
             
             local SliderTrackCorner = self:CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 3),
+                CornerRadius = UDim.new(1, 0),
                 Parent = SliderTrack
             })
             
@@ -400,7 +549,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             })
             
             local SliderFillCorner = self:CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 3),
+                CornerRadius = UDim.new(1, 0),
                 Parent = SliderFill
             })
             
@@ -416,7 +565,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             })
             
             local SliderButtonCorner = self:CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 9),
+                CornerRadius = UDim.new(1, 0),
                 Parent = SliderButton
             })
             
@@ -462,10 +611,10 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             return Slider
         end
         
-        function Tab:AddLabel(text)
+        function Tab:AddLabel(text, isTitle)
             local LabelFrame = self:CreateInstance("Frame", {
                 Name = "LabelFrame",
-                Size = UDim2.new(1, 0, 0, 25),
+                Size = UDim2.new(1, 0, 0, isTitle and 30 or 25),
                 BackgroundTransparency = 1,
                 Parent = TabContent,
                 LayoutOrder = #TabContent:GetChildren()
@@ -476,10 +625,10 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
                 Size = UDim2.new(1, 0, 1, 0),
                 BackgroundTransparency = 1,
                 Text = text,
-                TextColor3 = colors.Text,
+                TextColor3 = isTitle and colors.Text or colors.SubText,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                Font = Enum.Font.Gotham,
-                TextSize = 13,
+                Font = isTitle and Enum.Font.GothamBold or Enum.Font.Gotham,
+                TextSize = isTitle and 14 or 12,
                 Parent = LabelFrame
             })
             
@@ -489,7 +638,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
         function Tab:AddDivider()
             local DividerFrame = self:CreateInstance("Frame", {
                 Name = "DividerFrame",
-                Size = UDim2.new(1, 0, 0, 15),
+                Size = UDim2.new(1, 0, 0, 20),
                 BackgroundTransparency = 1,
                 Parent = TabContent,
                 LayoutOrder = #TabContent:GetChildren()
@@ -499,7 +648,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
                 Name = "Divider",
                 Size = UDim2.new(1, 0, 0, 1),
                 Position = UDim2.new(0, 0, 0.5, 0),
-                BackgroundColor3 = Color3.fromRGB(80, 80, 90),
+                BackgroundColor3 = Color3.fromRGB(60, 64, 78),
                 BorderSizePixel = 0,
                 Parent = DividerFrame
             })
@@ -507,7 +656,50 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
             return Divider
         end
         
-        -- Ersten Tab automatisch anzeigen
+        function Tab:AddSection(title)
+            local Section = self:CreateInstance("Frame", {
+                Name = title .. "Section",
+                Size = UDim2.new(1, 0, 0, 0),
+                BackgroundColor3 = colors.Card,
+                BorderSizePixel = 0,
+                Parent = TabContent,
+                LayoutOrder = #TabContent:GetChildren()
+            })
+            
+            local SectionCorner = self:CreateInstance("UICorner", {
+                CornerRadius = UDim.new(0, 8),
+                Parent = Section
+            })
+            
+            local SectionLayout = self:CreateInstance("UIListLayout", {
+                Parent = Section,
+                SortOrder = Enum.SortOrder.LayoutOrder,
+                Padding = UDim.new(0, 10)
+            })
+            
+            local SectionPadding = self:CreateInstance("UIPadding", {
+                Parent = Section,
+                PaddingTop = UDim.new(0, 15),
+                PaddingBottom = UDim.new(0, 15),
+                PaddingLeft = UDim.new(0, 15),
+                PaddingRight = UDim.new(0, 15)
+            })
+            
+            SectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                Section.Size = UDim2.new(1, 0, 0, SectionLayout.AbsoluteContentSize.Y + 30)
+            end)
+            
+            if title then
+                local Title = self:AddLabel(title, true)
+                Title.Parent = Section
+                Title.Size = UDim2.new(1, -30, 0, 20)
+                Title.Position = UDim2.new(0, 15, 0, 0)
+            end
+            
+            return Section
+        end
+        
+        -- Show first tab automatically
         if #tabs == 0 then
             Tab:Show()
         end
@@ -520,15 +712,15 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
         return Tab
     end
     
-    -- Event-Handler
+    -- Event Handlers
     CloseButton.MouseButton1Click:Connect(function()
-        self:Tween(CloseButton, {BackgroundColor3 = colors.Danger}, 0.1)
+        self:Tween(CloseButton, {BackgroundTransparency = 0.8}, 0.1)
         wait(0.1)
         Window:Toggle()
-        self:Tween(CloseButton, {BackgroundColor3 = Color3.fromRGB(0, 0, 0, 0)}, 0.2)
+        self:Tween(CloseButton, {BackgroundTransparency = 0.9}, 0.2)
     end)
     
-    -- Tastenkürzel
+    -- Keybind
     if keybind then
         UserInputService.InputBegan:Connect(function(input, processed)
             if not processed and input.KeyCode == Enum.KeyCode[keybind] then
@@ -537,7 +729,7 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
         end)
     end
     
-    -- Layout-Updates
+    -- Layout Updates
     ContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         ContentContainer.CanvasSize = UDim2.new(0, 0, 0, ContentLayout.AbsoluteContentSize.Y + 20)
     end)
@@ -545,5 +737,4 @@ function ElegantUI:CreateWindow(title, keybind, customColors)
     return Window
 end
 
-return ElegantUI
-
+return ModernUI
