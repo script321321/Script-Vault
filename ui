@@ -636,24 +636,20 @@ function OrionLib:MakeWindow(WindowConfig)
 		Parent = Orion,
 		Position = UDim2.new(0.5, -307, 0.5, -172),
 		Size = UDim2.new(0, 615, 0, 344),
-		ClipsDescendants = true
+		ClipsDescendants = true,
+		ZIndex = 2  -- Hauptfenster hat niedrigere Priorität
 	}), {
-		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
-		--	AnchorPoint = Vector2.new(0.5, 0.5),
-		--	Position = UDim2.new(0.5, 0, 0.5, 0),
-		--	Size = UDim2.new(1, 80, 1, 320),
-		--	ImageColor3 = Color3.fromRGB(33, 33, 33),
-		--	ImageTransparency = 0.7
-		--}),
 		SetChildren(SetProps(MakeElement("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 50),
-			Name = "TopBar"
+			Name = "TopBar",
+			ZIndex = 3  -- TopBar hat höhere Priorität
 		}), {
 			WindowName,
 			WindowTopBarLine,
 			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
 				Size = UDim2.new(0, 70, 0, 30),
-				Position = UDim2.new(1, -90, 0, 10)
+				Position = UDim2.new(1, -90, 0, 10),
+				ZIndex = 4  -- Buttons haben höchste Priorität
 			}), {
 				AddThemeObject(MakeElement("Stroke"), "Stroke"),
 				AddThemeObject(SetProps(MakeElement("Frame"), {
@@ -753,30 +749,27 @@ function OrionLib:MakeWindow(WindowConfig)
 		LoadSequence()
 	end	
 
-	local TabFunction = {}
-	function TabFunction:MakeTab(TabConfig)
-		TabConfig = TabConfig or {}
-		TabConfig.Name = TabConfig.Name or "Tab"
-		TabConfig.Icon = TabConfig.Icon or ""
-		TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
-
 		local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
 			Size = UDim2.new(1, 0, 0, 30),
-			Parent = TabHolder
+			Parent = TabHolder,
+			ZIndex = 10,  -- Hinzufügen für bessere Sichtbarkeit
+			BackgroundTransparency = 1
 		}), {
 			AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
 				AnchorPoint = Vector2.new(0, 0.5),
 				Size = UDim2.new(0, 18, 0, 18),
 				Position = UDim2.new(0, 10, 0.5, 0),
 				ImageTransparency = 0.4,
-				Name = "Ico"
+				Name = "Ico",
+				ZIndex = 11  -- Hinzufügen für bessere Sichtbarkeit
 			}), "Text"),
 			AddThemeObject(SetProps(MakeElement("Label", TabConfig.Name, 14), {
 				Size = UDim2.new(1, -35, 1, 0),
 				Position = UDim2.new(0, 35, 0, 0),
 				Font = Enum.Font.GothamSemibold,
 				TextTransparency = 0.4,
-				Name = "Title"
+				Name = "Title",
+				ZIndex = 11  -- Hinzufügen für bessere Sichtbarkeit
 			}), "Text")
 		})
 
@@ -789,7 +782,9 @@ function OrionLib:MakeWindow(WindowConfig)
 			Position = UDim2.new(0, 150, 0, 50),
 			Parent = MainWindow,
 			Visible = false,
-			Name = "ItemContainer"
+			Name = "ItemContainer",
+			ZIndex = 5,  -- Wichtige Änderung: Niedrigere ZIndex als Tabs
+			BackgroundTransparency = 1  -- Transparenter Hintergrund
 		}), {
 			MakeElement("List", 0, 6),
 			MakeElement("Padding", 15, 10, 10, 15)
