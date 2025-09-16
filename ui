@@ -620,49 +620,36 @@ function OrionLib:MakeWindow(WindowConfig)
 		}),
 	}), "Second")
 
-	local WindowName = AddThemeObject(SetProps(MakeElement("Label", WindowConfig.Name, 14), {
-		Size = UDim2.new(1, -30, 2, 0),
-		Position = UDim2.new(0, 25, 0, -24),
-		Font = Enum.Font.GothamBlack,
-		TextSize = 20
-	}), "Text")
-
-	local WindowTopBarLine = AddThemeObject(SetProps(MakeElement("Frame"), {
-		Size = UDim2.new(1, 0, 0, 1),
-		Position = UDim2.new(0, 0, 1, -1)
-	}), "Stroke")
-
-	local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
-		Parent = Orion,
-		Position = UDim2.new(0.5, -307, 0.5, -172),
-		Size = UDim2.new(0, 615, 0, 344),
-		ClipsDescendants = true,
-		ZIndex = 2  -- Hauptfenster hat niedrigere Priorität
-	}), {
-		SetChildren(SetProps(MakeElement("TFrame"), {
-			Size = UDim2.new(1, 0, 0, 50),
-			Name = "TopBar",
-			ZIndex = 3  -- TopBar hat höhere Priorität
-		}), {
-			WindowName,
-			WindowTopBarLine,
-			AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
-				Size = UDim2.new(0, 70, 0, 30),
-				Position = UDim2.new(1, -90, 0, 10),
-				ZIndex = 4  -- Buttons haben höchste Priorität
-			}), {
-				AddThemeObject(MakeElement("Stroke"), "Stroke"),
-				AddThemeObject(SetProps(MakeElement("Frame"), {
-					Size = UDim2.new(0, 1, 1, 0),
-					Position = UDim2.new(0.5, 0, 0, 0)
-				}), "Stroke"), 
-				CloseBtn,
-				MinimizeBtn
-			}), "Second"), 
-		}),
-		DragPoint,
-		WindowStuff
-	}), "Main")
+local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
+    Parent = Orion,
+    Position = UDim2.new(0.5, -307, 0.5, -172),
+    Size = UDim2.new(0, 615, 0, 344),
+    ClipsDescendants = true
+}), {
+    SetChildren(SetProps(MakeElement("TFrame"), {
+        Size = UDim2.new(1, 0, 0, 50),
+        Name = "TopBar",
+        ZIndex = 20  -- Erhöhen
+    }), {
+        SetProps(WindowName, {ZIndex = 21}),  -- Erhöhen
+        SetProps(WindowTopBarLine, {ZIndex = 21}),  -- Erhöhen
+        AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
+            Size = UDim2.new(0, 70, 0, 30),
+            Position = UDim2.new(1, -90, 0, 10),
+            ZIndex = 22  -- Erhöhen
+        }), {
+            SetProps(AddThemeObject(MakeElement("Stroke"), "Stroke"), {ZIndex = 23}),
+            SetProps(AddThemeObject(SetProps(MakeElement("Frame"), {
+                Size = UDim2.new(0, 1, 1, 0),
+                Position = UDim2.new(0.5, 0, 0, 0)
+            }), "Stroke"), {ZIndex = 23}),
+            SetProps(CloseBtn, {ZIndex = 24}),  -- Erhöhen
+            SetProps(MinimizeBtn, {ZIndex = 24})  -- Erhöhen
+        }), "Second"), 
+    }),
+    SetProps(DragPoint, {ZIndex = 25}),  -- Erhöhen
+    SetProps(WindowStuff, {ZIndex = 10})  -- Verringern
+}), "Main")
 
 	if WindowConfig.ShowIcon then
 		WindowName.Position = UDim2.new(0, 50, 0, -24)
@@ -749,46 +736,45 @@ function OrionLib:MakeWindow(WindowConfig)
 		LoadSequence()
 	end	
 
-		local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
-			Size = UDim2.new(1, 0, 0, 30),
-			Parent = TabHolder,
-			ZIndex = 10,  -- Hinzufügen für bessere Sichtbarkeit
-			BackgroundTransparency = 1
-		}), {
-			AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
-				AnchorPoint = Vector2.new(0, 0.5),
-				Size = UDim2.new(0, 18, 0, 18),
-				Position = UDim2.new(0, 10, 0.5, 0),
-				ImageTransparency = 0.4,
-				Name = "Ico",
-				ZIndex = 11  -- Hinzufügen für bessere Sichtbarkeit
-			}), "Text"),
-			AddThemeObject(SetProps(MakeElement("Label", TabConfig.Name, 14), {
-				Size = UDim2.new(1, -35, 1, 0),
-				Position = UDim2.new(0, 35, 0, 0),
-				Font = Enum.Font.GothamSemibold,
-				TextTransparency = 0.4,
-				Name = "Title",
-				ZIndex = 11  -- Hinzufügen für bessere Sichtbarkeit
-			}), "Text")
-		})
+local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
+    Size = UDim2.new(1, 0, 0, 30),
+    Parent = TabHolder,
+    ZIndex = 15,  -- Wichtig: Höher als Container
+    BackgroundTransparency = 1
+}), {
+    AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
+        AnchorPoint = Vector2.new(0, 0.5),
+        Size = UDim2.new(0, 18, 0, 18),
+        Position = UDim2.new(0, 10, 0.5, 0),
+        ImageTransparency = 0.4,
+        Name = "Ico",
+        ZIndex = 16  -- Höher als Tab
+    }), "Text"),
+    AddThemeObject(SetProps(MakeElement("Label", TabConfig.Name, 14), {
+        Size = UDim2.new(1, -35, 1, 0),
+        Position = UDim2.new(0, 35, 0, 0),
+        Font = Enum.Font.GothamSemibold,
+        TextTransparency = 0.4,
+        Name = "Title",
+        ZIndex = 16  -- Höher als Tab
+    }), "Text")
+})
 
 		if GetIcon(TabConfig.Icon) ~= nil then
 			TabFrame.Ico.Image = GetIcon(TabConfig.Icon)
 		end	
-
-		local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
-			Size = UDim2.new(1, -150, 1, -50),
-			Position = UDim2.new(0, 150, 0, 50),
-			Parent = MainWindow,
-			Visible = false,
-			Name = "ItemContainer",
-			ZIndex = 5,  -- Wichtige Änderung: Niedrigere ZIndex als Tabs
-			BackgroundTransparency = 1  -- Transparenter Hintergrund
-		}), {
-			MakeElement("List", 0, 6),
-			MakeElement("Padding", 15, 10, 10, 15)
-		}), "Divider")
+        local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
+    Size = UDim2.new(1, -150, 1, -50),
+    Position = UDim2.new(0, 150, 0, 50),
+    Parent = MainWindow,
+    Visible = false,
+    Name = "ItemContainer",
+    ZIndex = 5,  -- Niedriger als Tabs
+    BackgroundTransparency = 1
+}), {
+    MakeElement("List", 0, 6),
+    MakeElement("Padding", 15, 10, 10, 15)
+}), "Divider")
 
 		AddConnection(Container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
 			Container.CanvasSize = UDim2.new(0, 0, 0, Container.UIListLayout.AbsoluteContentSize.Y + 30)
@@ -890,9 +876,10 @@ function OrionLib:MakeWindow(WindowConfig)
 
 				local Button = {}
 
-				local Click = SetProps(MakeElement("Button"), {
-					Size = UDim2.new(1, 0, 1, 0)
-				})
+                local Click = SetProps(MakeElement("Button"), {
+            Size = UDim2.new(1, 0, 1, 0),
+            ZIndex = 8  -- Hinzufügen
+            })
 
 				local ButtonFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 33),
@@ -1035,19 +1022,21 @@ function OrionLib:MakeWindow(WindowConfig)
 				local Slider = {Value = SliderConfig.Default, Save = SliderConfig.Save}
 				local Dragging = false
 
-				local SliderDrag = SetChildren(SetProps(MakeElement("RoundFrame", SliderConfig.Color, 0, 5), {
-					Size = UDim2.new(0, 0, 1, 0),
-					BackgroundTransparency = 0.3,
-					ClipsDescendants = true
-				}), {
-					AddThemeObject(SetProps(MakeElement("Label", "value", 13), {
-						Size = UDim2.new(1, -12, 0, 14),
-						Position = UDim2.new(0, 12, 0, 6),
-						Font = Enum.Font.GothamBold,
-						Name = "Value",
-						TextTransparency = 0
-					}), "Text")
-				})
+local SliderDrag = SetChildren(SetProps(MakeElement("RoundFrame", SliderConfig.Color, 0, 5), {
+    Size = UDim2.new(0, 0, 1, 0),
+    BackgroundTransparency = 0.3,
+    ClipsDescendants = true,
+    ZIndex = 8  -- Hinzufügen
+}), {
+    AddThemeObject(SetProps(MakeElement("Label", "value", 13), {
+        Size = UDim2.new(1, -12, 0, 14),
+        Position = UDim2.new(0, 12, 0, 6),
+        Font = Enum.Font.GothamBold,
+        Name = "Value",
+        TextTransparency = 0,
+        ZIndex = 9  -- Hinzufügen
+    }), "Text")
+})
 
 				local SliderBar = SetChildren(SetProps(MakeElement("RoundFrame", SliderConfig.Color, 0, 5), {
 					Size = UDim2.new(1, -24, 0, 26),
