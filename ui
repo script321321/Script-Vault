@@ -92,12 +92,63 @@ local function overrideSetting(category, name, value)
     overriddenSettings[string.format("%s.%s", category, name)] = value
 end
 
+-- If requests/analytics have been disabled by developer, set the user-facing setting to false as well
 -- Settings that have been overridden by the developer. These will not be saved to the user's configuration file
 -- Overridden settings always take precedence over settings in the configuration file, and are cleared if the user changes the setting in the UI
 local overriddenSettings = {} -- For example, overriddenSettings["System.rayfieldOpen"] = "J"
 
 local function overrideSetting(category, name, value)
     overriddenSettings[category .. "." .. name] = value
+end
+
+-- ... rest of your code ...
+
+local settingsTable = {
+    General = {
+        -- if needs be in order just make getSetting(name)
+        rayfieldOpen = {Type = 'bind', Value = 'K', Name = 'Rayfield Keybind'},
+        -- buildwarnings
+        -- rayfieldprompts
+    },
+    System = {
+        usageAnalytics = {Type = 'toggle', Value = true, Name = 'Anonymised Analytics'},
+    }
+}
+
+-- If requests/analytics have been disabled by developer, set the user-facing setting to false as well
+if requestsDisabled then
+    -- Only override if the setting exists
+    if settingsTable.System and settingsTable.System.usageAnalytics then
+        overrideSetting("System", "usageAnalytics", false)
+    end
+end-- Settings that have been overridden by the developer. These will not be saved to the user's configuration file
+-- Overridden settings always take precedence over settings in the configuration file, and are cleared if the user changes the setting in the UI
+local overriddenSettings = {} -- For example, overriddenSettings["System.rayfieldOpen"] = "J"
+
+local function overrideSetting(category, name, value)
+    overriddenSettings[category .. "." .. name] = value
+end
+
+-- ... rest of your code ...
+
+local settingsTable = {
+    General = {
+        -- if needs be in order just make getSetting(name)
+        rayfieldOpen = {Type = 'bind', Value = 'K', Name = 'Rayfield Keybind'},
+        -- buildwarnings
+        -- rayfieldprompts
+    },
+    System = {
+        usageAnalytics = {Type = 'toggle', Value = true, Name = 'Anonymised Analytics'},
+    }
+}
+
+-- If requests/analytics have been disabled by developer, set the user-facing setting to false as well
+if requestsDisabled then
+    -- Only override if the setting exists
+    if settingsTable.System and settingsTable.System.usageAnalytics then
+        overrideSetting("System", "usageAnalytics", false)
+    end
 end
 
 local HttpService = getService('HttpService')
