@@ -725,10 +725,14 @@ function OrionLib:MakeWindow(WindowConfig)
 		TabConfig.Icon = TabConfig.Icon or ""
 		TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
 
-		local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
-			Size = UDim2.new(1, 0, 0, 30),
-			Parent = TabHolder
-		}), {
+		
+						local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
+				Size = UDim2.new(1, 0, 0, 30),
+				Parent = TabHolder,
+				ZIndex = 15,
+				BackgroundTransparency = 0.5,  // Transparenz reduzieren
+				BackgroundColor3 = Color3.fromRGB(50, 50, 50)  // Hintergrundfarbe hinzufügen
+			}), {
 			AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
 				AnchorPoint = Vector2.new(0, 0.5),
 				Size = UDim2.new(0, 18, 0, 18),
@@ -750,14 +754,17 @@ function OrionLib:MakeWindow(WindowConfig)
 		end	
 
 		local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
-			Size = UDim2.new(1, -150, 1, -50),
-			Position = UDim2.new(0, 150, 0, 50),
-			Parent = MainWindow,
-			Visible = false,
-			Name = "ItemContainer"
+    	Size = UDim2.new(1, -150, 1, -50),
+    	Position = UDim2.new(0, 150, 0, 50),
+    	Parent = MainWindow,
+    	Visible = false,
+		Name = "ItemContainer",
+    	ZIndex = 5,
+    	BackgroundColor3 = Color3.fromRGB(45, 45, 45),  // Hintergrundfarbe hinzufügen
+    	BackgroundTransparency = 0.2                    // Leichte Transparenz
 		}), {
-			MakeElement("List", 0, 6),
-			MakeElement("Padding", 15, 10, 10, 15)
+    	MakeElement("List", 0, 6),
+		MakeElement("Padding", 15, 10, 10, 15)
 		}), "Divider")
 
 		AddConnection(Container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
@@ -925,7 +932,8 @@ function OrionLib:MakeWindow(WindowConfig)
 				local ToggleBox = SetChildren(SetProps(MakeElement("RoundFrame", ToggleConfig.Color, 0, 4), {
 					Size = UDim2.new(0, 24, 0, 24),
 					Position = UDim2.new(1, -24, 0.5, 0),
-					AnchorPoint = Vector2.new(0.5, 0.5)
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundColor3 = Color3.fromRGB(100, 100, 100)  // Standardfarbe hinzufügen
 				}), {
 					SetProps(MakeElement("Stroke"), {
 						Color = ToggleConfig.Color,
@@ -1008,14 +1016,16 @@ function OrionLib:MakeWindow(WindowConfig)
 				local SliderDrag = SetChildren(SetProps(MakeElement("RoundFrame", SliderConfig.Color, 0, 5), {
 					Size = UDim2.new(0, 0, 1, 0),
 					BackgroundTransparency = 0.3,
-					ClipsDescendants = true
+					ClipsDescendants = true,
+					BackgroundColor3 = SliderConfig.Color  // Farbe explizit setzen
 				}), {
 					AddThemeObject(SetProps(MakeElement("Label", "value", 13), {
 						Size = UDim2.new(1, -12, 0, 14),
 						Position = UDim2.new(0, 12, 0, 6),
 						Font = Enum.Font.GothamBold,
 						Name = "Value",
-						TextTransparency = 0
+						TextTransparency = 0,
+						TextColor3 = Color3.fromRGB(255, 255, 255)  // Textfarbe auf Weiß setzen
 					}), "Text")
 				})
 
