@@ -13,14 +13,14 @@ local OrionLib = {
 	Themes = {
 		Default = {
 			Main = Color3.fromRGB(25, 25, 25),
-			Second = Color3.fromRGB(32, 32, 32),
-			Stroke = Color3.fromRGB(60, 60, 60),
+			Second = Color3.fromRGB(1, 1, 1),
+			Stroke = Color3.fromRGB(1, 60, 60),
 			Divider = Color3.fromRGB(60, 60, 60),
 			Text = Color3.fromRGB(240, 240, 240),
 			TextDark = Color3.fromRGB(150, 150, 150)
 		}
 	},
-	SelectedTheme = "Default",
+	SelectedTheme = "Main",
 	Folder = nil,
 	SaveCfg = false
 }
@@ -499,6 +499,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	AddConnection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
     TabHolder.CanvasSize = UDim2.new(0, 0, 0, TabHolder.UIListLayout.AbsoluteContentSize.Y)
 	end)
+
 
 
 	local CloseBtn = SetChildren(SetProps(MakeElement("Button"), {
@@ -1224,11 +1225,10 @@ end)
 				end
 
 				AddConnection(Click.MouseButton1Click, function()
-    				TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)}):Play()
-    			SaveCfg(game.GameId)
-    				Toggle:Set(not Toggle.Value)
+			    Toggle:Set(not Toggle.Value)
+   				SaveCfg(game.GameId)
 				end)
-
+				
 				Dropdown:Refresh(Dropdown.Options, false)
 				Dropdown:Set(Dropdown.Value)
 				if DropdownConfig.Flag then				
@@ -1542,12 +1542,14 @@ end)
 				}), "Second")
 
 				AddConnection(Click.MouseButton1Click, function()
-					Colorpicker.Toggled = not Colorpicker.Toggled
-					TweenService:Create(ColorpickerFrame,TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{Size = Colorpicker.Toggled and UDim2.new(1, 0, 0, 148) or UDim2.new(1, 0, 0, 38)}):Play()
-					Color.Visible = Colorpicker.Toggled
-					Hue.Visible = Colorpicker.Toggled
-					ColorpickerFrame.F.Line.Visible = Colorpicker.Toggled
-				end)
+    Dropdown.Toggled = not Dropdown.Toggled
+    DropdownFrame.F.Line.Visible = Dropdown.Toggled
+    TweenService:Create(DropdownFrame.F.Ico, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = Dropdown.Toggled and 180 or 0}):Play()
+    if #Dropdown.Options > MaxElements then
+        TweenService:Create(DropdownFrame, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Dropdown.Toggled and UDim2.new(1, 0, 0, 38 + (MaxElements * 28)) or UDim2.new(1, 0, 0, 38)}):Play()
+    else
+        TweenService:Create(DropdownFrame, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = Dropdown.Toggled and UDim2.new(1, 0, 0, DropdownList.AbsoluteContentSize.Y + 38) or UDim2.new(1, 0, 0, 38)}):Play()
+    end
 
 				local function UpdateColorPicker()
 					ColorpickerBox.BackgroundColor3 = Color3.fromHSV(ColorH, ColorS, ColorV)
