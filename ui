@@ -1,3 +1,5 @@
+
+
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -6,23 +8,23 @@ local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
 
 local OrionLib = {
-    Elements = {},
-    ThemeObjects = {},
-    Connections = {},
-    Flags = {},
-    Themes = {
-        Default = {
-            Main = Color3.fromRGB(30, 30, 30),        -- Etwas heller gemacht
-            Second = Color3.fromRGB(40, 40, 40),      -- Etwas heller gemacht
-            Stroke = Color3.fromRGB(80, 80, 80),      -- Heller gemacht für bessere Sichtbarkeit
-            Divider = Color3.fromRGB(70, 70, 70),     -- Heller gemacht
-            Text = Color3.fromRGB(240, 240, 240),     
-            TextDark = Color3.fromRGB(180, 180, 180)  
-        }
-    },
-    SelectedTheme = "Default",
-    Folder = nil,
-    SaveCfg = false
+	Elements = {},
+	ThemeObjects = {},
+	Connections = {},
+	Flags = {},
+	Themes = {
+		Default = {
+			Main = Color3.fromRGB(30, 30, 45),
+			Second = Color3.fromRGB(40, 40, 55),
+			Stroke = Color3.fromRGB(70, 70, 90),
+			Divider = Color3.fromRGB(60, 60, 80),
+			Text = Color3.fromRGB(240, 240, 240),
+			TextDark = Color3.fromRGB(170, 170, 190)
+		}
+	},
+	SelectedTheme = "Default",
+	Folder = nil,
+	SaveCfg = false
 }
 
 --Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
@@ -725,14 +727,10 @@ function OrionLib:MakeWindow(WindowConfig)
 		TabConfig.Icon = TabConfig.Icon or ""
 		TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
 
-		
-						local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
-				Size = UDim2.new(1, 0, 0, 30),
-				Parent = TabHolder,
-				ZIndex = 15,
-				BackgroundTransparency = 0.5,  
-				BackgroundColor3 = Color3.fromRGB(50, 50, 50)  
-			}), {
+		local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
+			Size = UDim2.new(1, 0, 0, 30),
+			Parent = TabHolder
+		}), {
 			AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
 				AnchorPoint = Vector2.new(0, 0.5),
 				Size = UDim2.new(0, 18, 0, 18),
@@ -754,17 +752,14 @@ function OrionLib:MakeWindow(WindowConfig)
 		end	
 
 		local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
-    	Size = UDim2.new(1, -150, 1, -50),
-    	Position = UDim2.new(0, 150, 0, 50),
-    	Parent = MainWindow,
-    	Visible = false,
-		Name = "ItemContainer",
-    	ZIndex = 5,
-    	BackgroundColor3 = Color3.fromRGB(45, 45, 45),  
-    	BackgroundTransparency = 0.2                    
+			Size = UDim2.new(1, -150, 1, -50),
+			Position = UDim2.new(0, 150, 0, 50),
+			Parent = MainWindow,
+			Visible = false,
+			Name = "ItemContainer"
 		}), {
-    	MakeElement("List", 0, 6),
-		MakeElement("Padding", 15, 10, 10, 15)
+			MakeElement("List", 0, 6),
+			MakeElement("Padding", 15, 10, 10, 15)
 		}), "Divider")
 
 		AddConnection(Container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
@@ -932,8 +927,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				local ToggleBox = SetChildren(SetProps(MakeElement("RoundFrame", ToggleConfig.Color, 0, 4), {
 					Size = UDim2.new(0, 24, 0, 24),
 					Position = UDim2.new(1, -24, 0.5, 0),
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundColor3 = Color3.fromRGB(100, 100, 100)  
+					AnchorPoint = Vector2.new(0.5, 0.5)
 				}), {
 					SetProps(MakeElement("Stroke"), {
 						Color = ToggleConfig.Color,
@@ -1016,16 +1010,14 @@ function OrionLib:MakeWindow(WindowConfig)
 				local SliderDrag = SetChildren(SetProps(MakeElement("RoundFrame", SliderConfig.Color, 0, 5), {
 					Size = UDim2.new(0, 0, 1, 0),
 					BackgroundTransparency = 0.3,
-					ClipsDescendants = true,
-					BackgroundColor3 = SliderConfig.Color  
+					ClipsDescendants = true
 				}), {
 					AddThemeObject(SetProps(MakeElement("Label", "value", 13), {
 						Size = UDim2.new(1, -12, 0, 14),
 						Position = UDim2.new(0, 12, 0, 6),
 						Font = Enum.Font.GothamBold,
 						Name = "Value",
-						TextTransparency = 0,
-						TextColor3 = Color3.fromRGB(255, 255, 255)  
+						TextTransparency = 0
 					}), "Text")
 				})
 
