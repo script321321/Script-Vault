@@ -480,8 +480,8 @@ function OrionLib:MakeWindow(WindowConfig)
 	WindowConfig.IntroText = WindowConfig.IntroText or "loading Script/Vault"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
-	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://115153909199158"
-	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://115153909199158"
+	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://97436272636001"
+	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid:97436272636001//"
 	OrionLib.Folder = WindowConfig.ConfigFolder
 	OrionLib.SaveCfg = WindowConfig.SaveConfig
 
