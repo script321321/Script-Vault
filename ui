@@ -470,14 +470,14 @@ function OrionLib:MakeWindow(WindowConfig)
 	local UIHidden = false
 
 	WindowConfig = WindowConfig or {}
-	WindowConfig.Name = WindowConfig.Name or "Orion Library"
+	WindowConfig.Name = WindowConfig.Name or "loading Script/Vault"
 	WindowConfig.ConfigFolder = WindowConfig.ConfigFolder or WindowConfig.Name
 	WindowConfig.SaveConfig = WindowConfig.SaveConfig or false
 	WindowConfig.HidePremium = WindowConfig.HidePremium or false
 	if WindowConfig.IntroEnabled == nil then
 		WindowConfig.IntroEnabled = true
 	end
-	WindowConfig.IntroText = WindowConfig.IntroText or "Orion Library"
+	WindowConfig.IntroText = WindowConfig.IntroText or "loading Script/Vault"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
 	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
@@ -1249,7 +1249,7 @@ function OrionLib:MakeWindow(WindowConfig)
 				BindConfig.Flag = BindConfig.Flag or nil
 				BindConfig.Save = BindConfig.Save or false
 
-				local Bind = {Value = BindConfig.Default, Binding = false, Type = "Bind", Save = BindConfig.Save}
+				local Bind = {Value, Binding = false, Type = "Bind", Save = BindConfig.Save}
 				local Holding = false
 
 				local Click = SetProps(MakeElement("Button"), {
@@ -1286,64 +1286,47 @@ function OrionLib:MakeWindow(WindowConfig)
 				}), "Second")
 
 				AddConnection(BindBox.Value:GetPropertyChangedSignal("Text"), function()
+					--BindBox.Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)
 					TweenService:Create(BindBox, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)}):Play()
 				end)
 
-				-- Funktion zum Überprüfen, ob eine Taste gültig ist
-				local function IsValidKey(input)
-					if input.UserInputType == Enum.UserInputType.Keyboard then
-						return not table.find(BlacklistedKeys, input.KeyCode)
-					elseif input.UserInputType == Enum.UserInputType.MouseButton1 or
-						input.UserInputType == Enum.UserInputType.MouseButton2 or
-						input.UserInputType == Enum.UserInputType.MouseButton3 then
-						return true
+				AddConnection(Click.InputEnded, function(Input)
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+						if Bind.Binding then return end
+						Bind.Binding = true
+						BindBox.Value.Text = ""
 					end
-					return false
-				end
-
-				-- Funktion zum Formatieren des Key-Namens
-				local function GetKeyName(input)
-					if input.UserInputType == Enum.UserInputType.Keyboard then
-						return input.KeyCode.Name
-					else
-						return input.UserInputType.Name:gsub("MouseButton", "Mouse ")
-					end
-				end
-
-				AddConnection(Click.MouseButton1Click, function()
-					if Bind.Binding then return end
-					Bind.Binding = true
-					BindBox.Value.Text = "Press a key..."
 				end)
 
-				local inputConnection
-				inputConnection = UserInputService.InputBegan:Connect(function(input)
+				AddConnection(UserInputService.InputBegan, function(Input)
 					if UserInputService:GetFocusedTextBox() then return end
-					
-					if Bind.Binding then
-						if IsValidKey(input) then
-							local keyName = GetKeyName(input)
-							Bind:Set(keyName)
-							SaveCfg(game.GameId)
-						elseif input.KeyCode == Enum.KeyCode.Escape then
-							-- ESC-Taste zum Abbrechen
-							Bind.Binding = false
-							BindBox.Value.Text = Bind.Value
-						end
-					elseif input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode.Name == Bind.Value or
-						(input.UserInputType.Name:find("Mouse") and input.UserInputType.Name:gsub("MouseButton", "Mouse ") == Bind.Value) then
+					if (Input.KeyCode.Name == Bind.Value or Input.UserInputType.Name == Bind.Value) and not Bind.Binding then
 						if BindConfig.Hold then
 							Holding = true
 							BindConfig.Callback(Holding)
 						else
 							BindConfig.Callback()
 						end
+					elseif Bind.Binding then
+						local Key
+						pcall(function()
+							if not CheckKey(BlacklistedKeys, Input.KeyCode) then
+								Key = Input.KeyCode
+							end
+						end)
+						pcall(function()
+							if CheckKey(WhitelistedMouse, Input.UserInputType) and not Key then
+								Key = Input.UserInputType
+							end
+						end)
+						Key = Key or Bind.Value
+						Bind:Set(Key)
+						SaveCfg(game.GameId)
 					end
 				end)
 
-				AddConnection(UserInputService.InputEnded, function(input)
-					if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode.Name == Bind.Value or
-					(input.UserInputType.Name:find("Mouse") and input.UserInputType.Name:gsub("MouseButton", "Mouse ") == Bind.Value) then
+				AddConnection(UserInputService.InputEnded, function(Input)
+					if Input.KeyCode.Name == Bind.Value or Input.UserInputType.Name == Bind.Value then
 						if BindConfig.Hold and Holding then
 							Holding = false
 							BindConfig.Callback(Holding)
@@ -1359,21 +1342,27 @@ function OrionLib:MakeWindow(WindowConfig)
 					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Second}):Play()
 				end)
 
+				AddConnection(Click.MouseButton1Up, function()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+				end)
+
+				AddConnection(Click.MouseButton1Down, function()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+				end)
+
 				function Bind:Set(Key)
 					Bind.Binding = false
 					Bind.Value = Key or Bind.Value
+					Bind.Value = Bind.Value.Name or Bind.Value
 					BindBox.Value.Text = Bind.Value
 				end
 
-				-- Initialisiere den Bind mit dem Standardwert
-				Bind:Set(BindConfig.Default and BindConfig.Default.Name or "None")
-				
-				if BindConfig.Flag then                
+				Bind:Set(BindConfig.Default)
+				if BindConfig.Flag then				
 					OrionLib.Flags[BindConfig.Flag] = Bind
 				end
-				
 				return Bind
-			end
+			end  
 			function ElementFunction:AddTextbox(TextboxConfig)
 				TextboxConfig = TextboxConfig or {}
 				TextboxConfig.Name = TextboxConfig.Name or "Textbox"
